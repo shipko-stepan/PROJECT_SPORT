@@ -97,3 +97,57 @@ def task1(filepath, medals, output=None):
             print(f'{requested_country} didn\'t participate in Olympics')
         elif len(result) < 10:
             print('There are less than 10 medals')
+
+
+
+def print_totals(result: dict):
+    for k, v in result.items():
+        print(f'{k} - Gold: {v["Gold"]} - Silver: {v["Silver"]} - Bronze: {v["Bronze"]}')
+
+
+def write_totals_to_file(filename: str, data: dict):
+    with open(filename, 'w') as f:
+        for k, v in data.items():
+            f.write(f'{k} - Gold: {v["Gold"]} - Silver: {v["Silver"]} - Bronze: {v["Bronze"]}\n')
+
+
+def task2(filepath, total, output=None):
+    requested_year = int(total.strip())
+
+    countries = {}
+    years = set()
+
+    with open(filepath) as f:
+        f.readline()  # skip header
+        next_line = f.readline()
+        while next_line:
+            record = next_line.split('\t')
+            country = record[7].strip()
+            year = int(record[9].strip())
+            medal = record[14].strip()
+
+            years.add(year)
+
+            if requested_year != year:
+                next_line = f.readline()
+                continue
+
+            if medal != 'NA':
+                if country not in countries:
+                    bronze = 1 if medal == 'Bronze' else 0
+                    silver = 1 if medal == 'Silver' else 0
+                    gold = 1 if medal == 'Gold' else 0
+
+                    countries.update(
+                        {country: {'Bronze': bronze, 'Silver': silver, 'Gold': gold}}
+                    )
+                else:
+                    countries[country][medal] += 1
+            next_line = f.readline()
+    if int(requested_year) not in years:
+        print(f'In {requested_year} Olympics were not conducted')
+    elif not countries:
+        print(f'There is not champions in {requested_year}')
+    print_totals(countries)
+    if output:
+        write_totals_to_file(output, countries)
