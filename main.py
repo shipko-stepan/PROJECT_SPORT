@@ -17,6 +17,17 @@ def main():
 
     args = parser.parse_args()
 
+    if not args.filepath:
+        parser.print_help()
+        sys.exit(1)
+    if args.medals:
+        task1(args.filepath, args.medals, args.output)
+    elif args.total:
+        task2(args.filepath, args.total, args.output)
+    elif args.overall:
+        task3(args.filepath, args.overall, args.output)
+    elif args.interactive:
+        task4(args.filepath)
 
 def write_output_medals_to_file(filename: str, data: list):
     with open(filename, 'w') as f:
