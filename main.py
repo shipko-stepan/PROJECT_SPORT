@@ -196,3 +196,66 @@ def task3(filepath: str, countries: list, output=None):
                 f.write(f'{country}: {best_year}\n')
 
 
+def task4(filepath):
+    while True:
+        input_country = input('Please, enter country name or country code:\n')
+        if input_country in ('x', 'X'):
+            print('Bye')
+            sys.exit(0)
+
+        country_results = {}
+
+        olympics = {}
+
+        with open(filepath) as f:
+            f.readline()  # skip header
+            next_line = f.readline()
+            while next_line:
+                record = next_line.split('\t')
+                country = record[6].strip()
+                noc = record[7].strip()
+                year = int(record[9].strip())
+                medal = record[14].strip()
+                place = record[11].strip()
+                games = record[8].strip()
+
+                countries = {country, noc}
+
+                if input_country in countries:
+                    if games not in olympics:
+                        olympics[year] = [games, place]
+
+                    if medal != 'NA':
+                        if medal not in country_results:
+                            country_results[medal] = 1
+                        else:
+                            country_results[medal] += 1
+
+                        if year not in country_results:
+                            country_results[year] = 1
+                        else:
+                            country_results[year] += 1
+                next_line = f.readline()
+
+        bronze_count = country_results.pop('Bronze')
+        silver_count = country_results.pop('Silver')
+        gold_count = country_results.pop('Gold')
+
+        if olympics:
+            average_bronze = bronze_count/len(olympics) if bronze_count else 0
+            average_silver = silver_count/len(olympics) if silver_count else 0
+            average_gold = gold_count/len(olympics) if gold_count else 0
+
+        first_olympics = sorted(olympics.items())[0]
+        print(f'First Oympics: {first_olympics[0]}, {first_olympics[1][1]}')
+
+        best_olimpics, _ = get_best_and_worst_year_for_country(country_results)
+        _, worst_olimpics = get_best_and_worst_year_for_country(country_results)
+
+        print(f'The best Olympics: {best_olimpics} medals; {olympics[int(best_olimpics.split(",")[0])][1]}')
+        print(f'The worst Olympics: {worst_olimpics} medals; {olympics[int(worst_olimpics.split(",")[0])][1]}')
+        print(f'Avg bronze: {average_bronze}, Avg silver: {average_silver}, Avg gold: {average_gold}')
+
+
+if __name__ == '__main__':
+    main()
