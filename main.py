@@ -16,3 +16,14 @@ def main():
     group.add_argument('--interactive', '-i', help='Interactive mode', action='store_true')
 
     args = parser.parse_args()
+
+
+def write_output_medals_to_file(filename: str, data: list):
+    with open(filename, 'w') as f:
+        for line in data:
+            if 'Medals' not in line:
+                f.write(f'{line["Record"]}\n')
+            else:
+                f.write(f'Medals: {line["Medals"]}')
+
+        
