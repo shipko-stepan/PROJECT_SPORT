@@ -151,3 +151,48 @@ def task2(filepath, total, output=None):
     print_totals(countries)
     if output:
         write_totals_to_file(output, countries)
+
+
+def get_best_and_worst_year_for_country(data: dict):
+    d = {k: v for k, v in sorted(data.items(), key=lambda item: item[1], reverse=True)}
+    best_year = list(d.keys())[0]
+    worst_year = list(d.keys())[-1]
+    return f'{best_year}, {d[best_year]}', f'{worst_year}, {d[worst_year]}'
+
+
+def task3(filepath: str, countries: list, output=None):
+
+    countries_results = {}
+
+    with open(filepath) as f:
+        f.readline()  # skip header
+        next_line = f.readline()
+        while next_line:
+            record = next_line.split('\t')
+            country = record[6].strip()
+            noc = record[7].strip()
+            year = int(record[9].strip())
+            medal = record[14].strip()
+
+            countries_set = {country, noc}
+
+            for c in countries:
+                if c in countries_set:
+                    if medal != 'NA':
+                        if c not in countries_results:
+                            countries_results[c] = {year: 1}
+                        elif year not in countries_results[c]:
+                            countries_results[c][year] = 1
+                        else:
+                            countries_results[c][year] += 1
+            next_line = f.readline()
+    for country in countries_results:
+        best_year, _ = get_best_and_worst_year_for_country(countries_results[country])
+        print(f'{country}: {best_year}')
+    if output:
+        with open(output, 'w') as f:
+            for country in countries_results:
+                best_year, _ = get_best_and_worst_year_for_country(countries_results[country])
+                f.write(f'{country}: {best_year}\n')
+
+
