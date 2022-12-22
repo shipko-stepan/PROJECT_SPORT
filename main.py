@@ -26,6 +26,7 @@ def write_output_medals_to_file(filename: str, data: list):
             else:
                 f.write(f'Medals: {line["Medals"]}')
 
+
 def print_medals(result: list):
     for line in result:
         if 'Medals' not in line:
